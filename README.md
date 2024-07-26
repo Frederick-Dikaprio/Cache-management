@@ -11,22 +11,22 @@ class UserService extends BaseService
 {
     // Vos méthodes ici
 }
- 
-for example: 
-1) to add data to the database, you'll use
-```php
+```
+#for example: 
+#1) to add data to the database, you'll use
+
      $result = $this->insert($modelData);
 
- 2) for update it will be :
-```php
+ #2) for update it will be :
+ 
      $result = $this->update($modelData);
 
- 3) for delete it will be a void :
-```php
+ #3) for delete it will be a void :
+ 
      $this->delete($modelData);
 
-4) for search, there are several types :
-```php
+#4) for search, there are several types :
+ 
      $this->findModelBy($key, $value);
      $this->findModelById($id);
      $this->findUserByUuid($user_uuid);
