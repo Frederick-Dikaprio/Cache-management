@@ -9,6 +9,8 @@ To do this, in your service class, which could be :
 ## Classe UserService
 
 ```php
+use Caching\Management\Services\BaseService;
+
 class UserService extends BaseService
 {
     // your methods her

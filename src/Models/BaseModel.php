@@ -1,6 +1,6 @@
 <?php
 
-namespace Caching\Management\Models;
+namespace Happynessarl\Caching\Management\Models;
 
 trait BaseModel
 {

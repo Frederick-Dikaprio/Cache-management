@@ -1,9 +1,9 @@
 <?php
 
-namespace Caching\Management\Exceptions;
+namespace Happynessarl\Caching\Management\Exceptions;
 
 use Illuminate\Http\Response;
-use Caching\Management\Exceptions\BaseException;
+use Happynessarl\Caching\Management\Exceptions\BaseException;
 
 class CachedItemNotFoundException extends BaseException
 {

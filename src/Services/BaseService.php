@@ -1,14 +1,14 @@
 <?php
 
-namespace Caching\Management\Services;
+namespace Happynessarl\Caching\Management\Services;
 
-use Caching\Management\Exceptions\Handler;
-use Caching\Management\Exceptions\ModelException;
-use Caching\Management\Utils\CustomErrorMessages;
+use Happynessarl\Caching\Management\Exceptions\Handler;
+use Happynessarl\Caching\Management\Exceptions\ModelException;
+use Happynessarl\Caching\Management\Utils\CustomErrorMessages;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use Caching\Management\Exceptions\CachedItemNotFoundException;
+use Happynessarl\Caching\Management\Exceptions\CachedItemNotFoundException;
 
 abstract class BaseService
 {

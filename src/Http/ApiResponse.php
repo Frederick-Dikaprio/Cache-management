@@ -1,6 +1,6 @@
 <?php
 
-namespace Caching\Management\Http;
+namespace Happynessarl\Caching\Management\Http;
 
 use Illuminate\Http\JsonResponse;
 

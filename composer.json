@@ -1,23 +1,24 @@
 {
-    "name": "caching/management",
+    "name": "happynessarl/caching-management",
     "version": "1.0.0",
     "description": "Data caching system with integrated CRUD",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-        "name": "Frederick Dikaprio"
+        "name": "Frederick Dikaprio of HAPPYNESSARL",
+        "homepage": "https://happynessarl.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Caching\\Management\\": "src/"
+            "Happynessarl\\Caching\\Management\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Caching\\Management\\CheckServiceProvider"
+                "Happynessarl\\Caching\\Management\\CheckServiceProvider"
             ]
         }
     },
@@ -25,4 +26,3 @@
         "php": ">=8.1"
     }
 }
-

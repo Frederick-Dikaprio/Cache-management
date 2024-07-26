@@ -1,6 +1,6 @@
 <?php
 
-namespace Caching\Management\Exceptions;
+namespace Happynessarl\Caching\Management\Exceptions;
 
 use Exception;
 

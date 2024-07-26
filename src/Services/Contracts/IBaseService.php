@@ -1,6 +1,6 @@
 <?php
 
-namespace Caching\Management\Services\Contracts;
+namespace Happynessarl\Caching\Management\Services\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;

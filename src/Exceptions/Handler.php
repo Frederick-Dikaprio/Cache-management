@@ -1,14 +1,13 @@
 <?php
 
-namespace Caching\Management\Exceptions;
+namespace Happynessarl\Caching\Management\Exceptions;
 
 use Request;
 use Throwable;
 use PDOException;
 use Illuminate\Support\Arr;
-use Psr\Log\LoggerInterface;
-use Illuminate\Support\Facades\Response;
-use Caching\Management\Http\ApiResponse;
+use Psr\Log\LoggerInterface; 
+use Happynessarl\Caching\Management\Http\ApiResponse;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Validation\ValidationException;

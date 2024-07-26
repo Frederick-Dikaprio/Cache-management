@@ -1,11 +1,11 @@
 <?php
 
-namespace Caching\Management\Exceptions;
+namespace Happynessarl\Caching\Management\Exceptions;
 
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Caching\Management\Http\ApiResponse;
+use Happynessarl\Caching\Management\Http\ApiResponse;
 
 abstract class BaseException extends Exception
 {
