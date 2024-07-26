@@ -1,6 +1,6 @@
 <?php
 
-namespace Caching\Management;
+namespace Happynessarl\Caching\Management;
 
 use Illuminate\Support\ServiceProvider;
 

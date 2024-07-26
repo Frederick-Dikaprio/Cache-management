@@ -1,6 +1,6 @@
 <?php
 
-namespace Caching\Management\Utils;
+namespace Happynessarl\Caching\Management\Utils;
 
 class CustomErrorMessages
 {
