@@ -1,8 +1,9 @@
 <?php
 
-namespace CheckDate\PinModule\Exceptions;
+namespace Caching\Management\Exceptions;
 
 use Illuminate\Http\Response;
+use Caching\Management\Exceptions\BaseException;
 
 class CachedItemNotFoundException extends BaseException
 {

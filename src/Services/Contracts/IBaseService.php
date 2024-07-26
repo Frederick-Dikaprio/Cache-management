@@ -1,6 +1,6 @@
 <?php
 
-namespace CheckDate\PinModule\Services\Contracts;
+namespace Caching\Management\Services\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;

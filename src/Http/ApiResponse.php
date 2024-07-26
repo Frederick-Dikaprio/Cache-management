@@ -1,6 +1,6 @@
 <?php
 
-namespace CheckDate\PinModule\Http;
+namespace Caching\Management\Http;
 
 use Illuminate\Http\JsonResponse;
 

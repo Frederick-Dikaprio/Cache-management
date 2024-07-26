@@ -1,14 +1,14 @@
 <?php
 
-namespace CheckDate\PinModule\Services;
+namespace Caching\Management\Services;
 
-use CheckDate\PinModule\Exceptions\Handler;
-use CheckDate\PinModule\Exceptions\ModelException;
-use CheckDate\PinModule\Utils\CustomErrorMessages;
+use Caching\Management\Exceptions\Handler;
+use Caching\Management\Exceptions\ModelException;
+use Caching\Management\Utils\CustomErrorMessages;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use CheckDate\PinModule\Exceptions\CachedItemNotFoundException;
+use Caching\Management\Exceptions\CachedItemNotFoundException;
 
 abstract class BaseService
 {

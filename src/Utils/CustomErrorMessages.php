@@ -1,6 +1,6 @@
 <?php
 
-namespace CheckDate\PinModule\Utils;
+namespace Caching\Management\Utils;
 
 class CustomErrorMessages
 {

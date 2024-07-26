@@ -1,6 +1,6 @@
 <?php
 
-namespace CheckDate\PinModule\Exceptions;
+namespace Caching\Management\Exceptions;
 
 use Request;
 use Throwable;
@@ -8,7 +8,7 @@ use PDOException;
 use Illuminate\Support\Arr;
 use Psr\Log\LoggerInterface;
 use Illuminate\Support\Facades\Response;
-use CheckDate\PinModule\Http\ApiResponse;
+use Caching\Management\Http\ApiResponse;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Validation\ValidationException;

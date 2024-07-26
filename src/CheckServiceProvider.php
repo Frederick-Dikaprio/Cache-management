@@ -1,6 +1,6 @@
 <?php
 
-namespace CheckDate\PinModule;
+namespace Caching\Management;
 
 use Illuminate\Support\ServiceProvider;
 

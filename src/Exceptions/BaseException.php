@@ -1,11 +1,11 @@
 <?php
 
-namespace CheckDate\PinModule\Exceptions;
+namespace Caching\Management\Exceptions;
 
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use CheckDate\PinModule\Http\ApiResponse;
+use Caching\Management\Http\ApiResponse;
 
 abstract class BaseException extends Exception
 {
@@ -15,7 +15,7 @@ abstract class BaseException extends Exception
         if ($request) {
             $result = ApiResponse::error($this->getMessage(), $this->getCode());
         }
-
+        
         return $result;
     }
 }

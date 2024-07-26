@@ -1,6 +1,6 @@
 <?php
 
-namespace CheckDate\PinModule\Models;
+namespace Caching\Management\Models;
 
 trait BaseModel
 {

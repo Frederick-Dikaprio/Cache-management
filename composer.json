@@ -11,13 +11,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "CheckDate\\PinModule\\": "src/"
+            "Caching\\Management\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "CheckDate\\PinModule\\CheckServiceProvider"
+                "Caching\\Management\\CheckServiceProvider"
             ]
         }
     },
