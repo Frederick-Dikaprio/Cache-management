@@ -1,7 +1,7 @@
 {
-    "name": "checkdate/pinmodule",
+    "name": "caching/management",
     "version": "1.0.0",
-    "description": "Système de mise en cache de données avec un CRUD intégré",
+    "description": "Data caching system with integrated CRUD",
     "type": "library",
     "license": "MIT",
     "authors": [
