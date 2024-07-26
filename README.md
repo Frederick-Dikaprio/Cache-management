@@ -1,4 +1,4 @@
-# Cache Management
+# Happynessarl Cache Management
 
 This package lets you manage the cache with Laravel. You can choose to use Redis or the file system as your cache manager. On top of that, it contains an integrated CRUD system where the cache handles everything. All you have to do is pass the model, and you're done.
 
@@ -9,7 +9,7 @@ To do this, in your service class, which could be :
 ## Classe UserService
 
 ```php
-use Caching\Management\Services\BaseService;
+use Happynessarl\Caching\Management\Services\BaseService;
 
 class UserService extends BaseService
 {
