@@ -4,7 +4,7 @@ This package lets you manage the cache with Laravel. You can choose to use Redis
 
 To do this, in your service class, which could be :
 
-First, import this ``BaseModel`` trait into all your Laravel models in order to manage all caches, as they are managed by models.
+# First, import this ``BaseModel`` trait into all your Laravel models in order to manage all caches, as they are managed by models.
    
 ## Classe UserService
 
@@ -15,16 +15,17 @@ class UserService extends BaseService
 }
 ```
 #for example:
-#1) to add data to the database, you'll use
+
+# 1) to add data to the database, you'll use
      $result = $this->insert($modelData);
 
-#2) for update it will be :
+# 2) for update it will be :
      $result = $this->update($modelData);
 
-#3) for delete it will be a void :
+# 3) for delete it will be a void :
     $this->delete($modelData);
 
-#4) for search, there are several types :
+# 4) for search, there are several types :
      $this->findModelBy($key, $value);
      $this->findModelById($id);
      $this->findUserByUuid($user_uuid);
