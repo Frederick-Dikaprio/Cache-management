@@ -1,0 +1,28 @@
+{
+    "name": "checkdate/pinmodule",
+    "version": "1.0.0",
+    "description": "Système de mise en cache de données avec un CRUD intégré",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+        "name": "Frederick Dikaprio"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "CheckDate\\PinModule\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CheckDate\\PinModule\\CheckServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "php": ">=8.1"
+    }
+}
+
