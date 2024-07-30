@@ -1,17 +1,22 @@
 <?php
 
-namespace Happynessarl\Caching\Management\Services;
+namespace App\Services;
 
-use Happynessarl\Caching\Management\Exceptions\Handler;
-use Happynessarl\Caching\Management\Exceptions\ModelException;
-use Happynessarl\Caching\Management\Utils\CustomErrorMessages;
+use App\Exceptions\Handler;
+use App\Exceptions\ModelException;
+use App\Utils\CustomErrorMessages;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use Happynessarl\Caching\Management\Exceptions\CachedItemNotFoundException;
+use App\Exceptions\CachedItemNotFoundException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * @author Frederic Dikaprio <freedikaprio@email.com>
+*/
 abstract class BaseService
 {
+    const CACHE_DURATION = 86400;
     /**
      * @var Model
      */
@@ -53,6 +58,24 @@ abstract class BaseService
     }
 
     /**
+     * paginate Array data
+     *
+     * @param Collection $items
+     * @param integer $perPage
+     * @return LengthAwarePaginator
+     */
+    public function paginateModelCollection(Collection $items,  $perPage = 10): LengthAwarePaginator
+    {
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $total = $items->count();
+
+        $paginatedItems = $items->slice(($currentPage - 1) * $perPage, $perPage);
+        $paginator = new LengthAwarePaginator($paginatedItems, $total, $perPage, $currentPage);
+
+        return $paginator;
+    }
+
+    /**
      * @param Model $model
      * @throws ModelException
      */
@@ -62,8 +85,13 @@ abstract class BaseService
             throw new ModelException('Failed to insert model');
         }
 
-        $this->setModel($model);
+        $this->updateCachedCollection(function ($collection) use ($model) {
+            $relations = $this->getCacheableRelations($model);
+            $modelWithRelations = $model->load($relations);
+            return $collection->push($modelWithRelations);
+        });
 
+        $this->setModel($model);
         return $this->findModelById($model->id);
     }
 
@@ -79,8 +107,16 @@ abstract class BaseService
 
         $this->redisCacheDataBase()::forget($model->getCacheKey());
 
+        $this->updateCachedCollection(function ($collection) use ($model) {
+            $relations = $this->getCacheableRelations($model);
+            $modelWithRelations = $model->fresh($relations);
+            return $collection->map(function ($item) use ($modelWithRelations) {
+                return $item->id === $modelWithRelations->id ? $modelWithRelations : $item;
+            });
+        });
+
         $this->setModel($model);
-        $this->findModelById($model->id);
+        return $this->findModelById($model->id);
     }
 
     /**
@@ -95,7 +131,30 @@ abstract class BaseService
 
         $this->redisCacheDataBase()::forget($model->getCacheKey());
 
+        $this->updateCachedCollection(function ($collection) use ($model) {
+            return $collection->reject(function ($item) use ($model) {
+                return $item->id === $model->id;
+            });
+        });
         $this->unsetModel();
+    }
+
+    /**
+     * @param callable $updateFunction
+     * @return void
+     */
+    protected function updateCachedCollection(callable $updateFunction)
+    {
+        $cacheKey = $this->getAllRecordsCacheKey();
+        $cachedCollection = $this->redisCacheDataBase()::get($cacheKey);
+
+        if ($cachedCollection) {
+            $updatedCollection = $updateFunction($cachedCollection);
+            $this->redisCacheDataBase()::put($cacheKey, $updatedCollection, self::CACHE_DURATION);
+        } else {
+            // If the collection is not in cache, we need to create it
+            $this->cacheAllRecords();
+        }
     }
 
     /**
@@ -114,32 +173,51 @@ abstract class BaseService
             return $this->getFromCache($main_cache_key);
         } catch (CachedItemNotFoundException $e) {
             app()->get(Handler::class)->report($e);
-            $model = $this->getModelObject()::where([$key => $value])->first();
+            $result = $this->getModelObject()::where([$key => $value])->first();
+            $relations = $this->getCacheableRelations($result);
+            $model = !blank($relations) ? $result->load($relations) : $result;
             return $this->saveReferenceToCache($secondary_cache_key, $model, now()->addDay());
         }
     }
 
     /**
-     *  Not used, need to optimized it
+     * Cache all records of the model with optional relations and pagination
      *
-     * @param string $key
-     * @param mixed $value
-     * @throws ModelException
+     * @param array $relations Relations to eager load
      * @return Collection
      */
-    public function findCollectionBy(string $key, $value)
+    public function cacheAllRecords()
     {
-        $table = strtolower($this->getModelObject()->getTable());
-        $secondary_cache_key =  $table . ":" . $key;
+        $cacheKey = $this->getAllRecordsCacheKey();
+        return $this->redisCacheDataBase()::remember($cacheKey, self::CACHE_DURATION, function () {
+            $model = $this->getModelObject();
+            $relations = $this->getCacheableRelations($model);
+            return $model->with($relations)->get();
+        });
+    }
 
-        try {
-            $main_cache_key = $this->getFromCache($secondary_cache_key);
-            return $this->getFromCache($main_cache_key);
-        } catch (CachedItemNotFoundException $e) {
-            app()->get(Handler::class)->report($e);
-            $collection = $this->getModelObject()::where([$key => $value])->get();
-            return $this->saveCollectionToCache($secondary_cache_key, $collection, now()->addDay());
+    /**
+     * get and return a models relationship
+     *
+     * @param Model $model
+     * @return array
+     */
+    protected function getCacheableRelations(Model $model)
+    {
+        if (method_exists($model, 'getCacheableRelations')) {
+            return $model->getCacheableRelations();
         }
+        return [];
+    }
+
+    /**
+     * Get the cache key for all records
+     *
+     * @return string
+     */
+    protected function getAllRecordsCacheKey(): string
+    {
+        return strtolower($this->getModelObject()->getTable()) . ':all';
     }
 
     /**
@@ -148,10 +226,18 @@ abstract class BaseService
      * @return Collection
      * @throws ModelNotFoundException
      */
-    public function getCollection(string $key, $value): Collection
+    public function getModelCollection(string $key, $value): Collection
     {
-        $result = $this->getModelObject()::where([$key => $value])->get();
-        if (blank($result)) {
+        $table = strtolower($this->getModelObject()->getTable());
+        $cache_key = $table . ":" . $key . ":" . $value;
+
+        $model = $this->redisCacheDataBase()::remember($cache_key, self::CACHE_DURATION, function () use ($key, $value) {
+            $modelObject = $this->getModelObject();
+            $relations = $this->getCacheableRelations($modelObject);
+            return $this->getModelObject()::with($relations)->where([$key => $value])->get();
+        });
+
+        if (blank($model)) {
             $error_message = CustomErrorMessages::interpolate(CustomErrorMessages::MODEL_NOT_FOUND, [
                 'model' => get_class($this->getModelObject()),
                 'key' => $key,
@@ -159,7 +245,7 @@ abstract class BaseService
             ]);
             throw new ModelException($error_message);
         }
-        return $result;
+        return $model;
     }
 
 
@@ -173,8 +259,10 @@ abstract class BaseService
         $table = strtolower($this->getModelObject()->getTable());
         $cache_key = $table . ":" . $id;
 
-        $model = $this->redisCacheDataBase()::rememberForever($cache_key, function () use ($id) {
-            return $this->getModelObject()::find($id);
+        $model = $this->redisCacheDataBase()::remember($cache_key, self::CACHE_DURATION, function () use ($id) {
+            $modelObject = $this->getModelObject();
+            $relations = $this->getCacheableRelations($modelObject);
+            return $this->getModelObject()::with($relations)->find($id);
         });
 
         if (!$model) {
@@ -199,8 +287,10 @@ abstract class BaseService
         $table = strtolower($this->getModelObject()->getTable());
         $cache_key = $table . ":" . $uuid;
 
-        $model = $this->redisCacheDataBase()::rememberForever($cache_key, function () use ($uuid) {
-            return $this->getModelObject()::where('uuid', $uuid)->first();
+        $model = $this->redisCacheDataBase()::remember($cache_key, self::CACHE_DURATION, function () use ($uuid) {
+            $modelObject = $this->getModelObject();
+            $relations = $this->getCacheableRelations($modelObject);
+            return $this->getModelObject()::with($relations)->where('uuid', $uuid)->first();
         });
 
         if (!$model) {
@@ -292,5 +382,4 @@ abstract class BaseService
     {
         return new Cache();
     }
-
 }

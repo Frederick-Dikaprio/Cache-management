@@ -9,4 +9,9 @@ trait BaseModel
         $table = strtolower($this->getTable());
         return $table . ":" . $this->id;
     }
+
+    public function getCacheableRelations()
+    {
+        return property_exists($this, 'cacheableRelations') ? $this->cacheableRelations : [];
+    }
 }

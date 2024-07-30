@@ -1,6 +1,6 @@
 {
     "name": "happynessarl/caching-management",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "description": "Data caching system with integrated CRUD",
     "type": "library",
     "license": "MIT",
@@ -23,6 +23,6 @@
         }
     },
     "require": {
-        "php": ">=8.1"
+        "php": "^8.1|^8.2|^8.3"
     }
 }

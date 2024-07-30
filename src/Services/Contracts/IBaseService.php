@@ -28,7 +28,7 @@ interface IBaseService
      * @return Collection
      * @throws ModelNotFoundException
      */
-    public function getCollection(string $key, $value): Collection;
+    public function getModelCollection(string $key, $value): Collection;
 
     /**
      * @param int $id
