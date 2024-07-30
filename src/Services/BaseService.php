@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace Happynessarl\Caching\Management\Services;
 
 use App\Exceptions\Handler;
 use App\Exceptions\ModelException;
