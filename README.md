@@ -6,6 +6,9 @@
 
 -> This package also offers you a quick and efficient way of managing relationships, but you need to specify them each time in your data responses. All you have to do is add an element to each of your models, and you're done!
 
+## install via composer in laravel
+  ```composer require happynessarl/caching-management```
+
 First To do this, in your service class, which could be :
 
 ## I- import this ``BaseModel`` trait into all your Laravel models in order to manage all caches, as they are managed by models
