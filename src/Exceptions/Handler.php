@@ -6,15 +6,13 @@ use Request;
 use Throwable;
 use PDOException;
 use Illuminate\Support\Arr;
-use Psr\Log\LoggerInterface; 
+use Psr\Log\LoggerInterface;
 use Happynessarl\Caching\Management\Http\ApiResponse;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Response as HttpResponse;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
+/**@author Frederick Dikaprio <freedikaprio@email.com> */
 class Handler extends ExceptionHandler
 {
     /**
@@ -92,26 +90,10 @@ class Handler extends ExceptionHandler
 
             ];
 
-        if ($e instanceof AuthenticationException) {
-            return ApiResponse::error(
-                'Authentication failed',
-                HttpResponse::HTTP_UNAUTHORIZED,
-                $extra
-            );
-        }
-
         if ($e instanceof PDOException) {
             return ApiResponse::error(
                 'Internal database error',
                 HttpResponse::HTTP_INTERNAL_SERVER_ERROR,
-                $extra
-            );
-        }
-
-        if ($e instanceof MethodNotAllowedException) {
-            return ApiResponse::error(
-                'The specified method for the request is invalid',
-                HttpResponse::HTTP_METHOD_NOT_ALLOWED,
                 $extra
             );
         }
@@ -124,21 +106,6 @@ class Handler extends ExceptionHandler
             );
         }
 
-        if ($e instanceof ValidationException) {
-            $reason = "";
-            $errors = $e->errors();
-            array_walk_recursive(
-                $errors,
-                function ($message) use (&$reason) {
-                    $reason .= (strlen($reason)) ? " | " : $reason;
-                    $reason .= $message;
-
-                    return $reason;
-                }
-            );
-
-            return ApiResponse::error($reason, HttpResponse::HTTP_BAD_REQUEST, $extra);
-        }
 
         if ($this->isHttpException($e)) {
             return ApiResponse::error('Request error', $status, $extra);

@@ -1,22 +1,20 @@
 <?php
 
-namespace Happynessarl\Caching\Management\Services;
+namespace App\Services;
 
-use App\Exceptions\Handler;
-use App\Exceptions\ModelException;
-use App\Utils\CustomErrorMessages;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use App\Exceptions\CachedItemNotFoundException;
+use Happynessarl\Caching\Management\Exceptions\Handler;
+use Happynessarl\Caching\Management\Exceptions\ModelException;
+use Happynessarl\Caching\Management\Utils\CustomErrorMessages;
+use Happynessarl\Caching\Management\Exceptions\CachedItemNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-/**
- * @author Frederic Dikaprio <freedikaprio@email.com>
-*/
 abstract class BaseService
 {
     const CACHE_DURATION = 86400;
+
     /**
      * @var Model
      */
@@ -85,13 +83,14 @@ abstract class BaseService
             throw new ModelException('Failed to insert model');
         }
 
+        $this->setModel($model);
+
         $this->updateCachedCollection(function ($collection) use ($model) {
             $relations = $this->getCacheableRelations($model);
             $modelWithRelations = $model->load($relations);
             return $collection->push($modelWithRelations);
         });
-
-        $this->setModel($model);
+ 
         return $this->findModelById($model->id);
     }
 
@@ -106,6 +105,7 @@ abstract class BaseService
         }
 
         $this->redisCacheDataBase()::forget($model->getCacheKey());
+        $this->setModel($model);
 
         $this->updateCachedCollection(function ($collection) use ($model) {
             $relations = $this->getCacheableRelations($model);
@@ -115,7 +115,6 @@ abstract class BaseService
             });
         });
 
-        $this->setModel($model);
         return $this->findModelById($model->id);
     }
 
@@ -189,10 +188,10 @@ abstract class BaseService
     public function cacheAllRecords()
     {
         $cacheKey = $this->getAllRecordsCacheKey();
-        return $this->redisCacheDataBase()::remember($cacheKey, self::CACHE_DURATION, function () {
+        return $this->redisCacheDataBase()::remember($cacheKey,  self::CACHE_DURATION, function () {
             $model = $this->getModelObject();
             $relations = $this->getCacheableRelations($model);
-            return $model->with($relations)->get();
+            return $model->with($relations)->orderBy('id', 'desc')->get();
         });
     }
 
@@ -234,7 +233,7 @@ abstract class BaseService
         $model = $this->redisCacheDataBase()::remember($cache_key, self::CACHE_DURATION, function () use ($key, $value) {
             $modelObject = $this->getModelObject();
             $relations = $this->getCacheableRelations($modelObject);
-            return $this->getModelObject()::with($relations)->where([$key => $value])->get();
+            return $this->getModelObject()::with($relations)->where([$key => $value])->orderBy('id', 'desc')->get();
         });
 
         if (blank($model)) {
@@ -334,30 +333,6 @@ abstract class BaseService
         $this->redisCacheDataBase()::put($secondaryKey, $mainKey, $expirationDate);
 
         return $model;
-    }
-
-    /**
-     * @param string $key
-     * @param Collection $collection
-     * @param \DateTimeInterface $expirationDate
-     * @return Collection
-     */
-    protected function saveCollectionToCache(string $key, Collection $collection, \DateTimeInterface $expirationDate)
-    {
-        [, $cacheKey, $value] = explode(":", $key);
-
-        if ($collection->isEmpty()) {
-            $error_message = CustomErrorMessages::interpolate(CustomErrorMessages::COLLECTION_NOT_FOUND, [
-                'model' => get_class($this->getModelObject()),
-                'key' => $cacheKey,
-                'value' => $value
-            ]);
-            throw new ModelException($error_message);
-        }
-
-        $this->redisCacheDataBase()::put($key, $collection, $expirationDate);
-
-        return $collection;
     }
 
     /**
