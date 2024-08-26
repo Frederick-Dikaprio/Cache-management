@@ -150,10 +150,11 @@ abstract class BaseService
         if ($cachedCollection) {
             $updatedCollection = $updateFunction($cachedCollection);
             $this->redisCacheDataBase()::put($cacheKey, $updatedCollection, self::CACHE_DURATION);
-        } else {
-            // If the collection is not in cache, we need to create it
-            $this->cacheAllRecords();
-        }
+        } 
+        // else {
+        //     // If the collection is not in cache, we need to create it
+        //     $this->cacheAllRecords();
+        // }
     }
 
     /**
