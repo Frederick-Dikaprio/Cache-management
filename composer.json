@@ -1,6 +1,6 @@
 {
     "name": "happynessarl/caching-management",
-    "version": "1.3.0",
+    "version": "1.2.3",
     "description": "Data caching system with integrated CRUD",
     "type": "library",
     "license": "MIT",

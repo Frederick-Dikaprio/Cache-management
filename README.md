@@ -18,8 +18,9 @@ First To do this, in your service class, which could be :
 ```php
 use Happynessarl\Caching\Management\Services\BaseService;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Happynessarl\Caching\Management\Services\Contracts;
 
-class UserService extends BaseService
+class UserService extends BaseService implements IBaseService
 { 
     private function initializeModel(): void
     {
@@ -58,8 +59,6 @@ class UserService extends BaseService
 ## II- To manage relationships automatically without having to specify them on each data return, add this variable to each of your Models like this
 
 ```php
-
-<?php
 
 namespace App\Models;
  
